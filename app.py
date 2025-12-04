@@ -57,16 +57,35 @@ def save_entry():
     with open("./static/assets/data_files/data_entry.csv", "a") as f:
         f.write(entry)
     return jsonify("Success")
-
-#Write API here
-
+    
+@app.route("/predict-response", methods=["POST"])
+def get_bot_response():
+    """
+    API endpoint to get chatbot reply for a given user message.
+    Expects JSON: { "user_input": "<message text>" }
+    """
 
     # Get User Input
-    
-   
-    # Call the method to get bot response
-    
+    user_input = request.json.get("user_input")
 
+    if not user_input or user_input.strip() == "":
+        # Response to send if the user_input is empty/undefined
+        response = {
+            "status": "error",
+            "message": "Please enter a message to get a response!"
+        }
+        return jsonify(response)
+
+    # Call the method to get bot response
+    reply = bot_response(user_input)
+
+    response = {
+        "status": "success",
+        "data": {
+            "bot_response": reply
+        }
+    }
+    return jsonify(response)
     
 if __name__ == '__main__':
     app.run(debug=True)
